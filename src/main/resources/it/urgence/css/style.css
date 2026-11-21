@@ -1,0 +1,50 @@
+/* Colori ripresi dalle maquettes */
+.root {
+    -fx-font-family: "Inter", "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
+    -fx-background-color: #F4F6F8;
+}
+
+.sidebar {
+    -fx-background-color: #13212B;
+    -fx-padding: 24 16 24 16;
+}
+
+.logo {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 8 0 8;
+}
+
+.logo-sub {
+    -fx-text-fill: #9FB0BC;
+    -fx-font-size: 12px;
+    -fx-padding: 0 8 20 8;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #C9D4DB;
+    -fx-alignment: center-left;
+    -fx-pref-height: 44px;
+    -fx-padding: 0 14 0 14;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.nav-button:hover {
+    -fx-background-color: #1A2C37;
+}
+
+.nav-active {
+    -fx-background-color: #1F3441;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+.titolo {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #17212B;
+}

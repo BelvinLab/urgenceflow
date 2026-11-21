@@ -1,0 +1,19 @@
+# Build Maven
+target/
+
+# NetBeans
+nbproject/private/
+nb-configuration.xml
+
+# Altri IDE
+.idea/
+.vscode/
+*.iml
+
+# Database locale (creato all'avvio)
+data/
+*.db
+
+# Sistema
+.DS_Store
+Thumbs.db

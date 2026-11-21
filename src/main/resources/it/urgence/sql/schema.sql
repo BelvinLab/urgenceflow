@@ -1,0 +1,1 @@
+-- Schema del database UrgenceFlow (da completare allo Sprint 3)
