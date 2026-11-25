@@ -4,6 +4,8 @@
  */
 package it.urgence.model;
 
+import it.urgence.exception.DatiNonValidiException;
+import it.urgence.exception.StatoAccessoNonValidoException;
 import it.urgence.model.enums.CodiceTriage;
 import it.urgence.model.enums.Esito;
 import it.urgence.model.enums.ModalitaArrivo;
@@ -34,13 +36,21 @@ public class Accesso implements Comparable<Accesso>{
     private Esito esito;
     private List<VariazioneTriage> storicoTriage;
 
-    public Accesso(CodiceTriage codice,Paziente paziente,LocalDateTime arrivo,ModalitaArrivo modalitaArrivo,String sintomo) {
+    public Accesso(CodiceTriage codice,Paziente paziente,LocalDateTime arrivo,ModalitaArrivo modalitaArrivo,String sintomo) throws DatiNonValidiException{
         this.codice=codice;
         this.paziente=paziente;
+        if (arrivo == null) {
+            throw new DatiNonValidiException("L'orario di arrivo è obbligatorio");
+        }
+        if (arrivo.isAfter(LocalDateTime.now())) {
+            throw new DatiNonValidiException("L'orario di arrivo non può essere nel futuro");
+        }
         this.arrivo=arrivo;
         this.modalitaArrivo = modalitaArrivo;
-        this.sintomo=sintomo;
-        this.arrivo = LocalDateTime.now();
+        if (sintomo == null || sintomo.isBlank()) {
+                throw new DatiNonValidiException("Il sintomo è obbligatorio");
+        }
+        this.sintomo = sintomo.trim();
         this.stato = StatoAccesso.IN_ATTESA;
         this.storicoTriage = new ArrayList<>();
     }
@@ -50,25 +60,46 @@ public class Accesso implements Comparable<Accesso>{
     public StatoAccesso getStato(){
         return this.stato;
     }
+    public Medico getMedico() {
+        return medico;
+    }
     
-    public void rivaluta(CodiceTriage nuovo){
+    public void rivaluta(CodiceTriage nuovo) throws StatoAccessoNonValidoException{
+        
+        if (this.stato == StatoAccesso.CONCLUSO) {
+            throw new StatoAccessoNonValidoException(this, "Impossible rivalutare un'accesso già conclusion");
+        }
         VariazioneTriage variazione = new VariazioneTriage(LocalDateTime.now(), this.codice, nuovo);
         this.storicoTriage.add(variazione);
         this.codice=nuovo;
         
     }
     
-    public  void prendiInCarico(Box box , Medico medico){
-        this.box=box;
-        this.medico=medico;
-        this.presaInCarico=LocalDateTime.now();
-        this.stato=StatoAccesso.IN_CARICO;
+    public  void prendiInCarico(Box box , Medico medico) throws StatoAccessoNonValidoException{
+        if (this.stato==StatoAccesso.CONCLUSO) {
+            throw new  StatoAccessoNonValidoException(this,"Si tratta di un'accesso già concluso");
+        }else if (this.stato == StatoAccesso.IN_CARICO) {
+            throw new StatoAccessoNonValidoException(this,"Si tratta di un'accesso già in corso" );
+        }
+
+            
+            this.box=box;
+            this.medico=medico;
+            this.presaInCarico=LocalDateTime.now();
+            this.stato=StatoAccesso.IN_CARICO;
+        
     }
     
-    public void dimetti(Esito esito){
-        this.esito=esito;
-        this.dimissione=LocalDateTime.now();
-        this.stato=StatoAccesso.CONCLUSO;
+    public void dimetti(Esito esito) throws StatoAccessoNonValidoException{
+        if (this.stato == StatoAccesso.CONCLUSO) {
+            throw  new StatoAccessoNonValidoException(this, "Questo accesso è già stato concluso");
+             
+        }else if (this.stato == StatoAccesso.IN_ATTESA) {
+            throw  new StatoAccessoNonValidoException(this, "Impossibile dimettere un'accesso in attesa");
+        }
+       this.esito=esito;
+       this.dimissione=LocalDateTime.now();
+       this.stato=StatoAccesso.CONCLUSO;
                 
                 
     }
@@ -79,12 +110,12 @@ public class Accesso implements Comparable<Accesso>{
         
     }
     
-    public boolean isOltreAttesaMassima(LocalDateTime ora){
-        int attesaMax = this.codice.getAttesaMassima();
-        long attesa = ChronoUnit.MINUTES.between(this.arrivo, ora);
-        return attesa>attesaMax;
+    public boolean isOltreAttesaMassima(LocalDateTime ora) {
+        if (stato != StatoAccesso.IN_ATTESA) {
+            return false;            // non è più in attesa: nessuna allerta
+        }
+        return getAttesaMinuti(ora) > codice.getAttesaMassima();
     }
-    
    
     
     public int getIdAccesso(){

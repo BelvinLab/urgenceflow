@@ -1,0 +1,10 @@
+Complete Sprint 1: domain model validation, business exceptions and tests
+
+- Add checked exceptions (DatiNonValidiException, MedicoNonDisponibileException,
+  BoxNonDisponibileException, StatoAccessoNonValidoException,
+  AccessoGiaIncorsoException, ...)
+- Validate input in Persona, Paziente, Personale, Medico, Infermiere, Box, Accesso
+- Enforce rules: max 3 patients per doctor, one patient per box,
+  valid Accesso state transitions, one open Accesso per patient
+- Fix Persona.equals/hashCode
+- Add JUnit tests for Accesso, Box, Medico, Paziente (30 tests passing)

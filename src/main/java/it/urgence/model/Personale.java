@@ -4,6 +4,7 @@
  */
 package it.urgence.model;
 
+import it.urgence.exception.DatiNonValidiException;
 import it.urgence.model.enums.Turno;
 import java.time.LocalDate;
 
@@ -12,17 +13,20 @@ import java.time.LocalDate;
  * @author belvinlabs
  */
 public abstract class Personale extends Persona{
-    private String maricola;
+    private String matricola;
     private Turno turno;
 
-    public Personale(String maricola, Turno turno, String codiceFiscale, String nome, String cognome, LocalDate dataNascita, String telefono) {
+    public Personale(String matricola, Turno turno, String codiceFiscale, String nome, String cognome, LocalDate dataNascita, String telefono) throws  DatiNonValidiException{
         super(codiceFiscale, nome, cognome, dataNascita, telefono);
-        this.maricola = maricola;
+        if (matricola == null) {
+            throw new DatiNonValidiException("La matricola è obligatoria");
+        }
+        this.matricola = matricola;
         this.turno = turno;
     }
     
     public String getMatricola(){
-        return this.maricola;
+        return this.matricola;
     }
     
     public Turno getTurno(){

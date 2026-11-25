@@ -4,6 +4,8 @@
  */
 package it.urgence.model;
 
+import it.urgence.exception.DatiNonValidiException;
+import it.urgence.exception.MedicoNonDisponibileException;
 import it.urgence.model.enums.Turno;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,8 +20,11 @@ public class Medico extends Personale{
     private int maxPazienti=3;
     private List<Accesso> accessiInCarico;
 
-    public Medico(String specializzazione, String maricola, Turno turno, String codiceFiscale, String nome, String cognome, LocalDate dataNascita, String telefono) {
-        super(maricola, turno, codiceFiscale, nome, cognome, dataNascita, telefono);
+    public Medico(String specializzazione, String matricola, Turno turno, String codiceFiscale, String nome, String cognome, LocalDate dataNascita, String telefono) throws DatiNonValidiException{
+        super(matricola, turno, codiceFiscale, nome, cognome, dataNascita, telefono);
+        if (specializzazione == null) {
+            throw  new DatiNonValidiException("La specializzazione è obligatoria");
+        }
         this.specializzazione = specializzazione;
         this.accessiInCarico = new ArrayList<>();
     }
@@ -29,11 +34,12 @@ public class Medico extends Personale{
         return this.maxPazienti>0;
     }
     
-    public void assegna(Accesso accesso){
-        if (this.isDisponibile()) {
-            this.accessiInCarico.add(accesso);
-            maxPazienti--;
+    public void assegna(Accesso accesso) throws MedicoNonDisponibileException{
+        if (!this.isDisponibile()) {
+            throw  new MedicoNonDisponibileException(this);
         }
+        this.accessiInCarico.add(accesso);
+        maxPazienti--;
     }
     
     public void rilascia(Accesso accesso){
@@ -45,7 +51,7 @@ public class Medico extends Personale{
     }
     
     public int getCarico(){
-        return this.maxPazienti;
+        return 3-this.maxPazienti;
     }
     @Override
     public String getRuolo(){

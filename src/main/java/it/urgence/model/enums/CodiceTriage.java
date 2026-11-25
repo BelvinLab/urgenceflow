@@ -29,25 +29,19 @@ public enum CodiceTriage {
         return livello;
     }
 
-    public void setLivello(int livello) {
-        this.livello = livello;
-    }
+    
 
     public int getAttesaMassima() {
         return attesaMassima;
     }
 
-    public void setAttesaMassima(int attesaMassima) {
-        this.attesaMassima = attesaMassima;
-    }
+  
 
     public String getEtichetta() {
         return etichetta;
     }
 
-    public void setEtichetta(String etichetta) {
-        this.etichetta = etichetta;
-    }
+   
     
     
     

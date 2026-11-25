@@ -1,11 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package it.urgence.model;
 
+import it.urgence.exception.BoxNonDisponibileException;
+import it.urgence.exception.DatiNonValidiException;
 import it.urgence.model.enums.StatoBox;
 import it.urgence.model.enums.TipoBox;
+
 
 /**
  *
@@ -17,8 +16,14 @@ public class Box {
     private StatoBox stato;
     private Accesso accessoCorrente;
 
-    public Box() {
+    public Box(String codice,TipoBox tipo) throws  DatiNonValidiException{
+        if (codice == null) {
+            throw new DatiNonValidiException("Il codice box è obligatorio");
+        }
+        this.codice=codice;
         this.stato = StatoBox.LIBERO;
+        this.tipo=tipo;
+        
        
     }
     
@@ -27,11 +32,12 @@ public class Box {
         return this.stato == StatoBox.LIBERO;
     }
     
-    public void occupa(Accesso accesso){
-        if (this.stato==StatoBox.LIBERO) {
-            this.accessoCorrente=accesso;
-            this.stato=StatoBox.OCCUPATO;
+    public void occupa(Accesso accesso) throws BoxNonDisponibileException{
+        if (this.stato != StatoBox.LIBERO) {
+            throw new BoxNonDisponibileException(this, stato);
         }
+        this.accessoCorrente=accesso;
+        this.stato=StatoBox.OCCUPATO;
         
     }
     
